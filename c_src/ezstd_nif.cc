@@ -426,6 +426,9 @@ static ERL_NIF_TERM zstd_nif_compress_streaming_chunk(ErlNifEnv* env, int argc, 
     if (result == 0) {
         return enif_make_tuple2(env, ATOMS.atomOk, result_chunk);
     } else {
+        if (in_buffer.pos == offset) {
+            return make_error(env, "compressor stuck");
+        }
         ERL_NIF_TERM new_offset = enif_make_uint(env, in_buffer.pos);
         return enif_make_tuple3(env, ATOMS.atomContinue, result_chunk, new_offset);
     }
